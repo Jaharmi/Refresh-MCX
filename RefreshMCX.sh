@@ -7,11 +7,14 @@
 # Version 1.0 : Initial Version
 # Version 1.1 : Now kills the cfprefsd process to make sure there's no preference caching going on
 # 				https://developer.apple.com/library/mac/#releasenotes/CoreFoundation/CoreFoundation.html
+# Version 1.2 : Now removes MCX info from the local database to make sure.
 
 killall cfprefsd
-rm -R /Library/Managed\ Preferences/*
-dscl . -delete /Computers
-dscl . -list Computers | grep -v "^localhost$" | while read computer_name ; do sudo dscl . -delete Computers/"$computer_name" ; done
+rm -Rfd /Library/Managed\ Preferences
+dscl . -mcxdelete /Computers/localhost
+dscl . -mcxdelete /Users/uadmin
+dscl . -mcxdelete /Users/$3
+
 jamf manage
 jamf mcx
 
